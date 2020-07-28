@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Requestt;
+use App\Request;
 use App\Ride;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request as WebRequest;
 use Illuminate\Support\Facades\Auth;
 
 
-class RequesttsController extends Controller
+class RequestsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +17,8 @@ class RequesttsController extends Controller
      */
     public function index()
     {
-        $requestts = Requestt::all()->where('user_id', Auth::user()->id);
-        return view('requestts.index')->with('requestts', $requestts);
+        $requests = Request::all()->where('user_id', Auth::user()->id);
+        return view('requestts.index')->with('requestts', $requests);
     }
 
     /**
@@ -37,9 +37,9 @@ class RequesttsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(WebRequest $request)
     {
-        Requestt::create([
+        Request::create([
             'meetpointLatitude' => $request->meetpointLatitude,
             'meetpointLongitude' => $request->meetpointLongitude,
             'destinationLatitude' => $request->destinationLatitude,
@@ -56,7 +56,7 @@ class RequesttsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Requestt  $requestt
+     * @param  \App\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request)
@@ -67,26 +67,26 @@ class RequesttsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Requestt  $requestt
+     * @param  \App\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $requestt, $id)
+    public function edit(Request $request, $id)
     {
-        $requestt = Requestt::find($id);
-        return view('requestts.create', ['requestt' => $requestt]);
+        $request = Request::find($id);
+        return view('requests.create', ['request' => $request]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Requestt  $requestt
+     * @param  \App\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(WebRequest $request, $id)
     {
-        $requestt = Requestt::find($id);
-        $requestt->update([
+        $request = Request::find($id);
+        $request->update([
             'meetpointLatitude' => $request->meetpointLatitude,
             'meetpointLongitude' => $request->meetpointLongitude,
             'destinationLatitude' => $request->destinationLatitude,
@@ -97,18 +97,18 @@ class RequesttsController extends Controller
         ]);
 
         session()->flash('flashMessage', 'request is updated successfully',['timeout' => 100]);
-        return redirect(route('requestts.index'));
+        return redirect(route('requests.index'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Requestt  $requestt
+     * @param  \App\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $requestt = Requestt::find($id);
+        $requestt = Request::find($id);
         $requestt->delete();
 
         session()->flash('flashMessage', 'Request deleted successfully',['timeout' => 100]);
@@ -117,7 +117,7 @@ class RequesttsController extends Controller
 
     public function viewAvailableRides($id)
     {
-        $requestt = Requestt::find($id);
+        $requestt = Request::find($id);
         if ($requestt->response == false ) {
             $rides = Ride::all()->where('destination', $requestt->destination)->where('user_id', '<>', $requestt->user_id)->where('time', '>=', $requestt->time)->where('availableSeats', '>=', $requestt->neededSeats)->where('available',true);
             return view('requestts.viewAvailableRides')->with('rides', $rides)->with('requestt', $requestt);
@@ -130,16 +130,16 @@ class RequesttsController extends Controller
     }
     public function sendRequest($request_id, $ride_id)
     {
-        $requestt = Requestt::find($request_id);
+        $requestt = Request::find($request_id);
         $requestt->ride_id = $ride_id;
         $requestt->save();
         session()->flash('flashMessage', 'Request is sent',['timeout' => 100]);
-        $requestts=Requestt::all()->where('id','<>',$requestt->id);
+        $requestts=Request::all()->where('id','<>',$requestt->id);
         return view('requestts.index')->With('requestts',$requestts);
     }
     public function cancelRide($request_id, $ride_id)
     {
-        $requestt = Requestt::find($request_id);
+        $requestt = Request::find($request_id);
         $requestt->ride->availableSeats=$requestt->ride->availableSeats+ $requestt->neededSeats;
         $requestt->response=false;
         $requestt->ride_id = NULL;

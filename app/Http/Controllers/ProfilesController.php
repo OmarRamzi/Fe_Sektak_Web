@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Profile;
 use App\User;
 use App\Car;
-use App\Requestt;
+use App\Request;
 
 class ProfilesController extends Controller
 {

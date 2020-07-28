@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Ride;
-use App\Requestt;
-use Illuminate\Http\Request;
+use App\Request;
+use Illuminate\Http\Request as WebRequest;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -38,7 +38,7 @@ class RidesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(WebRequest $request)
     {
         Ride::create([
             'startPoint' => $request->startPoint,
@@ -81,7 +81,7 @@ class RidesController extends Controller
      * @param  \App\Ride  $ride
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(WebRequest $request, $id)
     {
         $ride = Ride::find($id);
         $ride->update([
@@ -111,12 +111,12 @@ class RidesController extends Controller
     public function viewSentRequests($id)
     {
         $ride = Ride::find($id);
-        $requestts = Ride::find($id)->requestts->where('neeededSeats', '<=', $ride->availableSeats)->where('response', false);
-        return view('rides.viewSentRequests')->with('requestts', $requestts)->with('ride', $ride);
+        $requests = Ride::find($id)->$requests->where('neeededSeats', '<=', $ride->availableSeats)->where('response', false);
+        return view('rides.viewSentRequests')->with('$requests', $requests)->with('ride', $ride);
     }
     public function acceptRequest($request_id, $ride_id)
     {
-        $requestt = Requestt::find($request_id);
+        $requestt = WebRequest::find($request_id);
         $ride = Ride::find($ride_id);
         if ($ride->availableSeats >= $requestt->neededSeats && $requestt->response == false) {
             $requestt->update([
@@ -127,14 +127,14 @@ class RidesController extends Controller
                 'availableSeats' => $ride->availableSeats - $requestt->neededSeats,
             ]);
             session()->flash('flashMessage', 'Request is accepted successfully', ['timeout' => 100]);
-            $requestts = Requestt::where('id', '<>', $request_id)->get();
-            return view('rides.viewSentRequests')->with('requestts', $requestts)->with('ride', $ride);
+            $requests = WebRequest::where('id', '<>', $request_id)->get();
+            return view('rides.viewSentRequests')->with('$requests', $requests)->with('ride', $ride);
         } else {
-            $requestts = Requestt::where('id', '<>', $request_id)->where('response',false);
-            if ($requestts->count() > 0) {
+            $requests = WebRequest::where('id', '<>', $request_id)->where('response',false);
+            if ($requests->count() > 0) {
                 session()->flash('flashMessage', 'You do not have enough seats for this request', ['timeout' => 100]);
             }
-            return view('rides.viewSentRequests')->with('requestts', $requestts)->with('ride', $ride);
+            return view('rides.viewSentRequests')->with('$requests', $requests)->with('ride', $ride);
         }
 
     }

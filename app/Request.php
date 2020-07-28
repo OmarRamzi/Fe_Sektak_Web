@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use App\User;
 use App\Ride;
 
-class Requestt extends Model
+class Request extends Model
 {
-    protected $fillable=['meetpointLatitude','meetpointLongitude','destinationLatitude','destinationLongitude','neededSeats','time','response','user_id','ride_id'];
+    protected $fillable=['meetPointLatitude','meetPointLongitude','destinationLatitude','destinationLongitude','neededSeats','time','response','user_id','ride_id'];
     public function user()
     {
         return $this->belongsTo(User::class);

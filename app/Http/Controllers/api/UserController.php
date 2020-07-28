@@ -30,12 +30,9 @@ class UserController extends Controller
             return response()->json($this->content);
         }
     }
-
-    public function details()
-    {
-        return response()->json(['user' => Auth::user()]);
+    public function getById(){
+        return User::findOrFail(request('userId'));
     }
-
     public function register()
     {
         $data = request()->all();
@@ -47,11 +44,10 @@ class UserController extends Controller
             'nationalId' => ['required', 'string', 'min:8', 'unique:users']
         ];
         $carRules = [
-
-            '0' => 'required|min:8',
-            '1' => 'required|string',
-            '2' => 'required|string',
-            '3' => 'required|min:8',
+            'license' => ['required','min:8','unique:cars'],
+            'model' => 'required|string',
+            'color' => 'required|string',
+            'userLicense' => 'required|min:8|unique:cars',
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->passes()) {
@@ -61,15 +57,15 @@ class UserController extends Controller
             $user->phoneNumber = request('phoneNumber');
             $user->nationalId = request('nationalId');
             $user->password = Hash::make(request('password'));
+//            dd(request('car')['license']);
             if (request('car') != null) {
                 $validator = Validator::make(request('car'), $carRules);
                 if ($validator->passes()) {
-
                     $car = new Car;
-                    $car->license = request('car')[0];
-                    $car->carModel = request('car')[1];
-                    $car->color = request('car')[2];
-                    $car->userLicense = request('car')[3];
+                    $car->license = request('car')['license'];
+                    $car->carModel = request('car')['model'];
+                    $car->color = request('car')['color'];
+                    $car->userLicense = request('car')['userLicense'];
                     $user->save();
                     $car->user_id = $user->id;
                     $car->save();
@@ -97,4 +93,9 @@ class UserController extends Controller
         }
         return response()->json($this->content);
     }
+    public function details()
+    {
+        return response()->json(['user' => Auth::user()]);
+    }
+
 }

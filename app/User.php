@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Requestt;
+use App\Request;
 use App\Ride;
 use App\Car;
 use App\Profile;
@@ -43,9 +43,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function requestts()
+    public function requests()
     {
-        return $this->hasMany(Requestt::class);
+        return $this->hasMany(Request::class);
     }
     public function rides()
     {

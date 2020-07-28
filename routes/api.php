@@ -24,14 +24,11 @@ Route::group(['namespace' => 'api'], function () {
 
 Route::group(['namespace' => 'api'], function () {
     Route::post('/register', 'UserController@register');
-    Route::get('/myRides', 'RidesController@index');
+    Route::get('/user', 'UserController@getById');
     Route::post('/ride', 'RidesController@store');
-    Route::post('/request', 'RequesttsController@store');
-    Route::get('/myRequests', 'RequesttsController@index');
-
-    Route::get('/availableRides', 'RequesttsController@viewAvailableRides');
-
-
-
+    Route::get('/myRides', 'RidesController@index');
+    Route::post('/request', 'RequestsController@store');
+    Route::get('/myRequests', 'RequestsController@index');
+    Route::get('/availableRides', 'RequestsController@viewAvailableRides');
 
 });

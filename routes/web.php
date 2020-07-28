@@ -24,13 +24,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/showCarForm', 'ProfilesController@showCarForm')->name('car.showCarForm');
-    Route::post('/FillcarDetails/{user_id}', 'ProfilesController@fillDetails')->name('car.fillDetails');
+    Route::post('/fillCarDetails/{user_id}', 'ProfilesController@fillDetails')->name('car.fillDetails');
 
-    Route::resource('/requestts', 'RequesttsController');
+    Route::resource('/requests', 'RequestsController');
     Route::resource('/rides', 'RidesController');
-    Route::get('/requestts/{id}/AvailableRides', 'RequesttsController@viewAvailableRides')->name('requestts.viewAvailableRides');
-    Route::get('/requestts/{request_id}/AvailableRides/{ride_id}', 'RequesttsController@sendRequest')->name('requsetts.sendRequest');
-    Route::get('/requestts/{request_id}/myRide/{ride_id}', 'RequesttsController@cancelRide')->name('requestts.cancelRide');
+    Route::get('/requests/{id}/AvailableRides', 'RequestsController@viewAvailableRides')->name('requestts.viewAvailableRides');
+    Route::get('/requests/{request_id}/AvailableRides/{ride_id}', 'RequestsController@sendRequest')->name('requsetts.sendRequest');
+    Route::get('/requests/{request_id}/myRide/{ride_id}', 'RequestsController@cancelRide')->name('requestts.cancelRide');
 
     //
     Route::get('/rides/{id}/AvailableRequests', 'RidesController@viewSentRequests')->name('rides.viewSentRequests');

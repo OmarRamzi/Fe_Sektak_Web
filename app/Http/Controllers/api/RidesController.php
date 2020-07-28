@@ -5,8 +5,8 @@ use App\Http\Controllers\Controller;
 
 use App\Ride;
 use App\User;
-use App\Requestt;
-use Illuminate\Http\Request;
+use App\Request;
+use Illuminate\Http\Request as WebRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,9 +18,14 @@ class RidesController extends Controller
     }
     public function index()
     {
-        $user = User::findOrFail(request('user_id'));
-
-        $this->content['rides'] = $user->rides;
+        $user = User::findOrFail(request('userId'));
+        $rides = $user->rides;
+        foreach ($rides as $ride){
+            if($ride->requests){
+                $ride['requests'] = $ride->requests;
+            }
+        }
+        $this->content['rides'] = $rides;
         return response()->json($this->content);
      }
 
@@ -32,21 +37,17 @@ class RidesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(WebRequest $request)
     {
-        /*
-        {'userId'-> سترنج,'startPointLatitude','startPointLongitude','endPointLatitude','endPointLongitude'-> دبل,availableSeats','date'-> تاريخ,'time'->وقت,'available'->true} كلهم مبعوتين سترنج لازم يتحولوا -> return {'status' : 'done' or 'undone'}
-         */
-
         $data = request()->all();
         $rules = [
-            'startPointLatitude' => ['required' ],
+            'startPointLatitude' => ['required'],
             'startPointLongitude' => ['required'],
             'endPointLatitude' => ['required'],
             'endPointLongitude' => ['required'],
             'availableSeats' => ['required'],
             'time' => ['required'],
-            'available' => [ 'boolean'],
+            'userId' => ['required']
 
         ];
         $validator = Validator::make($data, $rules);
@@ -60,7 +61,7 @@ class RidesController extends Controller
                 'availableSeats' =>request('availableSeats'),
                 'time' => request('time'),
                 'available' => true,
-                'user_id' => request('user_id')
+                'user_id' => request('userId')
             ]);
             $this->content['status'] = 'done';
             return response()->json($this->content);
@@ -102,7 +103,7 @@ class RidesController extends Controller
      * @param  \App\Ride  $ride
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(WebRequest $request, $id)
     {
         $ride = Ride::find($id);
         $ride->update([
@@ -137,7 +138,7 @@ class RidesController extends Controller
     }
     public function acceptRequest($request_id, $ride_id)
     {
-        $requestt = Requestt::find($request_id);
+        $requestt = Request::find($request_id);
         $ride = Ride::find($ride_id);
         if ($ride->availableSeats >= $requestt->neededSeats && $requestt->response == false) {
             $requestt->update([
@@ -148,10 +149,10 @@ class RidesController extends Controller
                 'availableSeats' => $ride->availableSeats - $requestt->neededSeats,
             ]);
             session()->flash('flashMessage', 'Request is accepted successfully', ['timeout' => 100]);
-            $requestts = Requestt::where('id', '<>', $request_id)->get();
-            return view('rides.viewSentRequests')->with('requestts', $requestts)->with('ride', $ride);
+            $requests = Request::where('id', '<>', $request_id)->get();
+            return view('rides.viewSentRequests')->with('requestts', $requests)->with('ride', $ride);
         } else {
-            $requestts = Requestt::where('id', '<>', $request_id)->where('response',false);
+            $requestts = Request::where('id', '<>', $request_id)->where('response',false);
             if ($requestts->count() > 0) {
                 session()->flash('flashMessage', 'You do not have enough seats for this request', ['timeout' => 100]);
             }

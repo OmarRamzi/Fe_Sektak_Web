@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\User;
-use App\Requestt;
+use App\Request;
 class Ride extends Model
 {
     protected $fillable=['startPointLatitude','startPointLongitude','destinationLatitude','destinationLongitude','availableSeats','time','available','user_id'];
@@ -13,9 +13,9 @@ class Ride extends Model
         return $this->belongsTo(User::class);
 
     }
-    public function requestts()
+    public function requests()
     {
-        return $this->hasMany(Requestt::class);
+        return $this->hasMany(Request::class);
     }
 
 }

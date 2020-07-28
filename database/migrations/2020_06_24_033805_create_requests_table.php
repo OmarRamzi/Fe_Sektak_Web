@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRequesttsTable extends Migration
+class CreateRequestsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateRequesttsTable extends Migration
      */
     public function up()
     {
-        Schema::create('requestts', function (Blueprint $table) {
+        Schema::create('requests', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->double('meetpointLatitude');
-            $table->double('meetpointLongitude');
+            $table->double('meetPointLatitude');
+            $table->double('meetPointLongitude');
             $table->double('destinationLatitude');
             $table->double('destinationLongitude');
             $table->integer('neededSeats')->default(1);
