@@ -32,7 +32,9 @@ class UserController extends Controller
     }
     public function getById()
     {
-        return User::findOrFail(request('userId'));
+        $user=User::find(request('userId'));
+        $user['profile']=$user->profile;
+        return $user;
     }
     public function register()
     {
