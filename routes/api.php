@@ -15,18 +15,21 @@ Route::group(['namespace' => 'api'], function () {
 Route::group(['namespace' => 'api'], function () {
     Route::post('/register', 'UserController@register');
     Route::get('/user', 'UserController@getById');
-    Route::post('/ride', 'RidesController@store');
-    Route::get('/myRides', 'RidesController@index');
+    Route::put('/user', 'UserController@edit');
+    Route::delete('/user', 'UserController@destroy');
+
+
+    Route::get('/allRequests', 'RequestsController@index');
     Route::post('/request', 'RequestsController@store');
-    Route::get('/myRequests', 'RequestsController@index');
-    Route::get('/availableRides', 'RequestsController@viewAvailableRides');
-    Route::post('/editUser', 'UserController@edit');
-    Route::post('/deleteRide', 'RidesController@destroy');
-    Route::post('/deleteRequest', 'RequestsController@destroy');
-    Route::post('/deleteUser', 'UserController@destroy');
-    Route::put('/request', 'RidesController@acceptRequest');
-    Route::post('/updateRide', 'RidesController@update');
-    Route::post('/updateRequest', 'RequestsController@update');
+    Route::put('/request', 'RequestsController@update');
+    Route::delete('/request', 'RequestsController@destroy');
+
+    Route::get('/allRides', 'RidesController@index');
+    Route::get('/availableRides', 'RidesController@viewAvailableRides');
+    Route::put('/acceptRequest', 'RidesController@acceptRequest');
+    Route::post('/ride', 'RidesController@store');
+    Route::delete('/ride', 'RidesController@destroy');
+    Route::put('/ride', 'RidesController@update');
 
 
 });

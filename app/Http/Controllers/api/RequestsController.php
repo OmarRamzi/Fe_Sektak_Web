@@ -24,7 +24,7 @@ class RequestsController extends Controller
     }
     public function index()
     {
-        $user = User::findOrFail(request('user_id'));
+        $user = User::findOrFail(request('userId'));
         $this->content['requests'] =  $user->requests;
         return response()->json($this->content);
     }
@@ -96,8 +96,9 @@ class RequestsController extends Controller
         if ($validator->passes()) {
             $request=Request::find(request('requestId'));
             $request->update([
+	    'ride_id' => request('rideId'),
             'meetPointLatitude' => request('meetPointLatitude'),
-            'meetPointLongitude' =>request('meetPointLatitude'),
+            'meetPointLongitude' =>request('meetPointLongitude'),
             'destinationLatitude' =>request('endPointLatitude'),
             'destinationLongitude' => request('endPointLongitude'),
             'neededSeats' => request('numberOfNeededSeats'),
@@ -131,57 +132,10 @@ class RequestsController extends Controller
             return response()->json($this->content);
         }
     }
-    public static function x(
-        $latitudeFrom,
-        $longitudeFrom,
-        $latitudeTo,
-        $longitudeTo
-    ) {
-        $long1 = deg2rad($longitudeFrom);
-        $long2 = deg2rad($longitudeTo);
-        $lat1 = deg2rad($latitudeFrom);
-        $lat2 = deg2rad($latitudeTo);
-
-        $dlong = $long2 - $long1;
-        $dlati = $lat2 - $lat1;
-
-        $val = pow(sin($dlati/2), 2)+cos($lat1)*cos($lat2)*pow(sin($dlong/2), 2);
-
-        $res = 2 * asin(sqrt($val));
-
-        $radius = 3958.756;
-
-        return ($res*$radius);
-    }
+   
 
 
-    public function viewAvailableRides(Request $request)
-    {
-        $request = Request::findOrFail(request('id'));
-        if ($request->response == false) {
-            $rides = Ride::all()
-            ->/*where('destination', request('destination')*/
-            where('user_id', '<>', $request->user_id)
-            ->where('time', '>=', $request->time)
-            ->where('availableSeats', '>=', $request->neededSeats)
-            ->where('available', true);
-
-            $filtered = $rides->filter(function ($value, $key) use ($request) {
-                return (self::x(
-                    $request->destinationLatitude,
-                    $request->destinationLongitude,
-                    $value->destinationLatitude,
-                    $value->destinationLongitude
-                )<5);
-            });
-
-            $this->content['rides'] = $filtered;
-            return response()->json($this->content);
-        } else {
-            $this->content['rides'] = $request->ride;
-            return response()->json($this->content);
-        }
-    }
+   
 
 
 

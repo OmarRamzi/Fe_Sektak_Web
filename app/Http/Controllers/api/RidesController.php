@@ -32,7 +32,7 @@ class RidesController extends Controller
 
      public function destroy()
      {
-         $ride = Ride::find(request('rideId'));
+         $ride = Ride::findOrFail(request('rideId'));
          if ($ride!=null) {
              $ride->delete();
              $this->content['status'] = 'done';
@@ -45,6 +45,55 @@ class RidesController extends Controller
 
      }
 
+public static function x(
+        $latitudeFrom,
+        $longitudeFrom,
+        $latitudeTo,
+        $longitudeTo
+    ) {
+        $long1 = deg2rad($longitudeFrom);
+        $long2 = deg2rad($longitudeTo);
+        $lat1 = deg2rad($latitudeFrom);
+        $lat2 = deg2rad($latitudeTo);
+
+        $dlong = $long2 - $long1;
+        $dlati = $lat2 - $lat1;
+
+        $val = pow(sin($dlati/2), 2)+cos($lat1)*cos($lat2)*pow(sin($dlong/2), 2);
+
+        $res = 2 * asin(sqrt($val));
+
+        $radius = 3958.756;
+
+        return ($res*$radius);
+    }
+
+
+    public function viewAvailableRides(Request $request)
+    {
+        $request = Request::findOrFail(request('id'));
+        if ($request->response == false) {
+            $rides = Ride::all()
+            ->where('user_id', '<>', $request->user_id)
+            ->where('time', '>=', $request->time)
+            ->where('availableSeats', '>=', $request->neededSeats)
+            ->where('available', true);
+            $filtered = $rides->filter(function ($value, $key) use ($request) {          
+return (self::x(
+                    $request->destinationLatitude,
+                    $request->destinationLongitude,
+                    $value->destinationLatitude,
+                    $value->destinationLongitude
+                )<5);
+            });
+
+            $this->content['rides'] = $filtered->values();
+            return response()->json($this->content);
+        } else {
+            $this->content['rides'] = $request->ride;
+            return response()->json($this->content);
+        }
+    }
 
 
     /**

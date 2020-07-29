@@ -23,7 +23,7 @@ class CreateRequestsTable extends Migration
             $table->time('time');
             $table->boolean('response')->default(false);
             $table->unsignedBigInteger('user_id');
-            $table->integer('ride_id')->nullable();
+            $table->unsignedBigInteger('ride_id')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('ride_id')->references('id')->on('rides')->onDelete('cascade');
