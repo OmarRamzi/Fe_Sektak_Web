@@ -30,5 +30,11 @@ Route::group(['namespace' => 'api'], function () {
     Route::post('/request', 'RequestsController@store');
     Route::get('/myRequests', 'RequestsController@index');
     Route::get('/availableRides', 'RequestsController@viewAvailableRides');
+    Route::post('/editUser', 'UserController@edit');
+    Route::post('/deleteRide', 'RidesController@destroy');
+    Route::post('/deleteRequest', 'RequestsController@destroy');
+    Route::post('/deleteUser', 'UserController@destroy');
+
+
 
 });

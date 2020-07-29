@@ -26,6 +26,7 @@ class CreateRequestsTable extends Migration
             $table->integer('ride_id')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('ride_id')->references('id')->on('rides')->onDelete('cascade');
 
         });
     }

@@ -30,6 +30,22 @@ class RidesController extends Controller
      }
 
 
+     public function destroy()
+     {
+         $ride = Ride::find(request('rideId'));
+         if ($ride!=null) {
+             $ride->delete();
+             $this->content['status'] = 'done';
+             return response()->json($this->content);
+         }else{
+            $this->content['status'] = 'already deleted';
+            return response()->json($this->content);
+         }
+
+
+     }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -117,19 +133,7 @@ class RidesController extends Controller
         return redirect(route('rides.index'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Ride  $ride
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $ride = Ride::find($id);
-        $ride->delete();
-        session()->flash('flashMessage', 'Ride is deleted successfully', ['timeout' => 100]);
-        return redirect(route('rides.index'));
-    }
+
     public function viewSentRequests($id)
     {
         $ride = Ride::find($id);

@@ -21,16 +21,17 @@ class UserController extends Controller
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
 
-           $this->content['user'] = $user;
-           $this->content['user']['profile'] = $user->profile;
-           $this->content['user']['car'] = $user->car;
+            $this->content['user'] = $user;
+            $this->content['user']['profile'] = $user->profile;
+            $this->content['user']['car'] = $user->car;
             return response()->json($this->content);
         } else {
             $this->content['error'] = "Unauthorized";
             return response()->json($this->content);
         }
     }
-    public function getById(){
+    public function getById()
+    {
         return User::findOrFail(request('userId'));
     }
     public function register()
@@ -96,6 +97,115 @@ class UserController extends Controller
     public function details()
     {
         return response()->json(['user' => Auth::user()]);
+    }
+
+
+
+
+
+
+
+    public function destroy()
+    {
+        $user = User::find(request('userId'));
+        if($user!=null){
+            $user->delete();
+            $this->content['status'] = 'done';
+            return response()->json($this->content);
+        }else{
+           $this->content['status'] = 'already deleted';
+           return response()->json($this->content);
+        }
+
+    }
+
+
+
+
+
+    //new function edit user:
+    public function edit()
+    {
+        $data = request()->all();
+        $rules = [
+            'name' => ['required', 'string', 'max:255'],
+            'phoneNumber' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8'],
+            'job'=>['string']
+
+        ];
+        $carRules = [
+            'car'=>[
+                'license' => 'min:8',
+                'model' => 'string',
+                'color' => 'string',
+                'userLicense' => 'min:8',
+            ]
+
+
+
+        ];
+        $validator = Validator::make($data, $rules);
+        if ($validator->passes()) {
+            $user = User::findOrFail(request('user_id'));
+
+            if (request('car') != null) {
+                $validator = Validator::make(request('car'), $carRules);
+                if ($validator->passes()) {
+                    $car=$user->car;
+                    if($car!=null){
+
+                        $car->update([
+                            'license' => request('car')[0],
+                            'carModel' => request('car')[1],
+                            'color' => request('car')[2],
+                            'userLicense' => request('car')[3],
+                            //'user_id' => $user->id,
+                        ]);
+
+                    }else{
+
+                        $car = $user->car()->create([
+                            'license' => request('car')[0],
+                            'carModel' => request('car')[1],
+                            'color' => request('car')[2],
+                            'userLicense' => request('car')[3],
+
+                        ]);
+
+
+                    }
+
+
+
+                } else {
+                    $this->content['status'] = 'undone';
+                    $this->content['details'] = $validator->errors()->all();
+                    return response()->json($this->content);
+                }
+            }
+            $user->update([
+                'name'=>request('name'),
+                'mobileNum'=>request('phoneNumber'),
+                'password'=>request('password'),
+            ]);
+            $profile=$user->profile;
+            $profile->update([
+                'job' => request('job'),
+            ]);
+            if (request()->hasFile('picture')) {
+                $picture = request('picture')->store('profilesPictures', 'public');
+                $profile->update([
+                'picture'=>$picture,
+                ]);
+            }
+            $this->content['status'] = 'done';
+            return response()->json($this->content);
+        } else {
+            $this->content['status'] = 'undone';
+            $this->content['details'] = $validator->errors()->all();
+            return response()->json($this->content);
+        }
     }
 
 }

@@ -67,7 +67,7 @@ class RequestsController extends Controller
             'destinationLongitude' => request('endPointLongitude'),
             'neededSeats' => request('numberOfNeededSeats'),
             'time' => request('time'),
-            'user_id' => request('user_id')
+            'user_id' => request('userId')
 
         ]);
         $this->content['status'] = 'done';
@@ -133,13 +133,18 @@ class RequestsController extends Controller
      * @param  \App\Request  $requestt
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy()
     {
-        $requestt = Request::find($id);
-        $requestt->delete();
+        $requestt = Request::find(request('requestId'));
+        if($requestt!=null){
+            $requestt->delete();
+            $this->content['status'] = 'done';
+            return response()->json($this->content);
+        }else{
+           $this->content['status'] = 'already deleted';
+           return response()->json($this->content);
+        }
 
-        session()->flash('flashMessage', 'Request deleted successfully',['timeout' => 100]);
-        return redirect(route('requestts.index'));
     }
     public static function x($latitudeFrom, $longitudeFrom,
                                     $latitudeTo,  $longitudeTo)
