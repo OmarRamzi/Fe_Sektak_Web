@@ -56,7 +56,7 @@ class RequestsController extends Controller
             'numberOfNeededSeats' => ['required'],
             'time' => ['required'],
             'response' => ['boolean'],
-            'user_id' => ['required']
+            'userId' => ['required']
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->passes()) {

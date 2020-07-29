@@ -140,10 +140,16 @@ class RidesController extends Controller
         $requestts = Ride::find($id)->requestts->where('neeededSeats', '<=', $ride->availableSeats)->where('response', false);
         return view('rides.viewSentRequests')->with('requestts', $requestts)->with('ride', $ride);
     }
-    public function acceptRequest($request_id, $ride_id)
+
+
+
+
+
+
+    public function acceptRequest()
     {
-        $requestt = Request::find($request_id);
-        $ride = Ride::find($ride_id);
+        $requestt = Request::find(request('requestId'));
+        $ride = Ride::find(request('rideId'));
         if ($ride->availableSeats >= $requestt->neededSeats && $requestt->response == false) {
             $requestt->update([
                 'response' => true,
@@ -152,15 +158,13 @@ class RidesController extends Controller
             $ride->update([
                 'availableSeats' => $ride->availableSeats - $requestt->neededSeats,
             ]);
-            session()->flash('flashMessage', 'Request is accepted successfully', ['timeout' => 100]);
-            $requests = Request::where('id', '<>', $request_id)->get();
-            return view('rides.viewSentRequests')->with('requestts', $requests)->with('ride', $ride);
+            $this->content['status'] = 'done';
+            return response()->json($this->content);
+
         } else {
-            $requestts = Request::where('id', '<>', $request_id)->where('response',false);
-            if ($requestts->count() > 0) {
-                session()->flash('flashMessage', 'You do not have enough seats for this request', ['timeout' => 100]);
-            }
-            return view('rides.viewSentRequests')->with('requestts', $requestts)->with('ride', $ride);
+            $this->content['status'] = 'unAvailable';
+            return response()->json($this->content);
+
         }
 
     }

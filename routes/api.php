@@ -34,6 +34,8 @@ Route::group(['namespace' => 'api'], function () {
     Route::post('/deleteRide', 'RidesController@destroy');
     Route::post('/deleteRequest', 'RequestsController@destroy');
     Route::post('/deleteUser', 'UserController@destroy');
+    Route::put('/request', 'RidesController@acceptRequest');
+
 
 
 

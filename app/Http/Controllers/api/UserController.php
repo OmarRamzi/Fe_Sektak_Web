@@ -158,20 +158,20 @@ class UserController extends Controller
                     if($car!=null){
 
                         $car->update([
-                            'license' => request('car')[0],
-                            'carModel' => request('car')[1],
-                            'color' => request('car')[2],
-                            'userLicense' => request('car')[3],
+                            'license' => request('car')['license'],
+                            'carModel' => request('car')['model'],
+                            'color' => request('car')['color'],
+                            'userLicense' => request('car')['userLicense'],
                             //'user_id' => $user->id,
                         ]);
 
                     }else{
 
                         $car = $user->car()->create([
-                            'license' => request('car')[0],
-                            'carModel' => request('car')[1],
-                            'color' => request('car')[2],
-                            'userLicense' => request('car')[3],
+                            'license' => request('car')['license'],
+                            'carModel' => request('car')['model'],
+                            'color' => request('car')['color'],
+                            'userLicense' => request('car')['userLicense'],
 
                         ]);
 
