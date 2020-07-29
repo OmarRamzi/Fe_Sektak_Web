@@ -90,49 +90,50 @@ class RidesController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Ride  $ride
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Ride $ride)
-    {
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Ride  $ride
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $ride = Ride::find($id);
-        return view('rides.create', ['ride' => $ride]);
-    }
-
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Ride  $ride
      * @return \Illuminate\Http\Response
      */
-    public function update(WebRequest $request, $id)
+    public function update()
     {
-        $ride = Ride::find($id);
-        $ride->update([
-            'startPoint' => $request->startPoint,
-            'destination' => $request->destination,
-            'availableSeats' => $request->availableSeats,
-            'time' => $request->time,
-            'user_id' => $request->user_id
-        ]);
-        session()->flash('flashMessage', 'Ride is updated successfully', ['timeout' => 100]);
-        return redirect(route('rides.index'));
+        $data = request()->all();
+        $rules = [
+            'startPointLatitude' => ['required'],
+            'startPointLongitude' => ['required'],
+            'endPointLatitude' => ['required'],
+            'endPointLongitude' => ['required'],
+            'availableSeats' => ['required'],
+            'time' => ['required'],
+            'userId' => ['required']
+        ];
+        $validator = Validator::make($data, $rules);
+        if ($validator->passes()) {
+            $ride=Ride::find(request('rideId'));
+            $ride->update([
+                'startPointLatitude' =>request('startPointLatitude'),
+                'startPointLongitude' =>request('startPointLongitude'),
+                'destinationLatitude' =>request('endPointLatitude'),
+                'destinationLongitude' =>request('endPointLongitude'),
+                'availableSeats' =>request('availableSeats'),
+                'time' => request('time'),
+                'available' => true,
+                'user_id' => request('userId')
+            ]);
+            $this->content['status'] = 'done';
+            return response()->json($this->content);
+    } else {
+            $this->content['status'] = 'undone';
+            $this->content['details'] = $validator->errors()->all();
+            return response()->json($this->content);
     }
 
+
+
+
+
+    }
 
     public function viewSentRequests($id)
     {
@@ -140,11 +141,6 @@ class RidesController extends Controller
         $requestts = Ride::find($id)->requestts->where('neeededSeats', '<=', $ride->availableSeats)->where('response', false);
         return view('rides.viewSentRequests')->with('requestts', $requestts)->with('ride', $ride);
     }
-
-
-
-
-
 
     public function acceptRequest()
     {
