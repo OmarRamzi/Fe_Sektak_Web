@@ -40,17 +40,17 @@ class RequestsController extends Controller
     public function store(WebRequest $request)
     {
         Request::create([
-            'meetpointLatitude' => $request->meetpointLatitude,
-            'meetpointLongitude' => $request->meetpointLongitude,
-            'destinationLatitude' => $request->destinationLatitude,
-            'destinationLongitude' => $request->destinationLongitude,
+            'meetPointLatitude' =>floatval( $request->meetPointLatitude),
+            'meetPointLongitude' => floatval($request->meetPointLongitude),
+            'destinationLatitude' => floatval($request->destinationLatitude),
+            'destinationLongitude' => floatval($request->destinationLongitude),
             'neededSeats' => $request->neededSeats,
             'time' => $request->time,
             'user_id' => $request->user_id
 
         ]);
         session()->flash('flashMessage', 'Request is created successfully',['timeout' => 100]);
-        return redirect(route('requestts.index'));
+        return redirect(route('requests.index'));
     }
 
     /**
@@ -70,10 +70,10 @@ class RequestsController extends Controller
      * @param  \App\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, $id)
+    public function edit($id)
     {
-        $request = Request::find($id);
-        return view('requests.create', ['request' => $request]);
+        $requestt = Request::find($id);
+        return view('requestts.create', ['requestt' => $requestt]);
     }
 
     /**
@@ -85,12 +85,12 @@ class RequestsController extends Controller
      */
     public function update(WebRequest $request, $id)
     {
-        $request = Request::find($id);
-        $request->update([
-            'meetpointLatitude' => $request->meetpointLatitude,
-            'meetpointLongitude' => $request->meetpointLongitude,
-            'destinationLatitude' => $request->destinationLatitude,
-            'destinationLongitude' => $request->destinationLongitude,
+        $requestt = Request::find($id);
+        $requestt->update([
+            'meetPointLatitude' =>floatval( $request->meetPointLatitude),
+            'meetPointLongitude' => floatval($request->meetPointLongitude),
+            'destinationLatitude' => floatval($request->destinationLatitude),
+            'destinationLongitude' => floatval($request->destinationLongitude),
             'neededSeats' => $request->neededSeats,
             'time' => $request->time,
             'user_id' => $request->user_id
@@ -112,14 +112,51 @@ class RequestsController extends Controller
         $requestt->delete();
 
         session()->flash('flashMessage', 'Request deleted successfully',['timeout' => 100]);
-        return redirect(route('requestts.index'));
+        return redirect(route('requests.index'));
+    }
+
+
+    public static function x(
+        $latitudeFrom,
+        $longitudeFrom,
+        $latitudeTo,
+        $longitudeTo
+    ) {
+        $long1 = deg2rad($longitudeFrom);
+        $long2 = deg2rad($longitudeTo);
+        $lat1 = deg2rad($latitudeFrom);
+        $lat2 = deg2rad($latitudeTo);
+
+        $dlong = $long2 - $long1;
+        $dlati = $lat2 - $lat1;
+
+        $val = pow(sin($dlati/2), 2)+cos($lat1)*cos($lat2)*pow(sin($dlong/2), 2);
+
+        $res = 2 * asin(sqrt($val));
+
+        $radius = 3958.756;
+
+        return ($res*$radius);
     }
 
     public function viewAvailableRides($id)
     {
         $requestt = Request::find($id);
-        if ($requestt->response == false ) {
-            $rides = Ride::all()->where('destination', $requestt->destination)->where('user_id', '<>', $requestt->user_id)->where('time', '>=', $requestt->time)->where('availableSeats', '>=', $requestt->neededSeats)->where('available',true);
+        if ($requestt->response == false) {
+            $rides = Ride::all()
+            ->where('user_id', '<>', $requestt->user_id)
+            ->where('time', '>=', $requestt->time)
+            ->where('availableSeats', '>=', $requestt->neededSeats)
+            ->where('available', true);
+            $filtered = $rides->filter(function ($value, $key) use ($requestt) {
+return (self::x(
+                    $requestt->destinationLatitude,
+                    $requestt->destinationLongitude,
+                    $value->destinationLatitude,
+                    $value->destinationLongitude
+                )<5);
+            });
+            $rides== $filtered->values();
             return view('requestts.viewAvailableRides')->with('rides', $rides)->with('requestt', $requestt);
         }else{
             session()->flash('flashMessage', 'You already reserved a ride',['timeout' => 100]);
@@ -145,6 +182,6 @@ class RequestsController extends Controller
         $requestt->ride_id = NULL;
         $requestt->save();
         session()->flash('flashMessage', 'Request to Ride is canceled ',['timeout' => 100]);
-        return redirect(route('requestts.index'));
+        return redirect(route('requests.index'));
     }
 }

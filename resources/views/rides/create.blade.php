@@ -16,12 +16,20 @@
                   @method('PUT')
                 @endif
                 <div class="form-group">
-                    <label for="startPoint">StartPoint:</label>
-                <input type="text" class="form-control" name="startPoint" placeholder="Enter the strartpoint" value="{{ isset($ride) ? $ride->startPoint: ''}}">
+                    <label for="startPoint">StartPointLatitude:</label>
+                <input type="text" class="form-control" name="startPointLatitude" placeholder="Enter the StartPointLatitude" value="{{ isset($ride) ? $ride->startPointLatitude: ''}}">
                 </div>
                 <div class="form-group">
-                    <label for="Destination">Destination:</label>
-                    <input type="text" class="form-control" name="destination" placeholder="Enter your destination" value="{{ isset($ride) ? $ride->destination: ''}}">
+                    <label for="startPoint">StartPointLongitude:</label>
+                <input type="text" class="form-control" name="startPointLongitude" placeholder="Enter the StartPointLongitude" value="{{ isset($ride) ? $ride->startPointLongitude: ''}}">
+                </div>
+                <div class="form-group">
+                    <label for="Destination">destinationLatitude:</label>
+                    <input type="text" class="form-control" name="destinationLatitude" placeholder="Enter your destinationLatitude" value="{{ isset($ride) ? $ride->destinationLatitude: ''}}">
+                </div>
+                <div class="form-group">
+                    <label for="Destination">destinationLongitude:</label>
+                    <input type="text" class="form-control" name="destinationLongitude" placeholder="Enter your destinationLongitude" value="{{ isset($ride) ? $ride->destinationLongitude: ''}}">
                 </div>
                 <div class="form-group">
                     <label for="Time">Time:</label>

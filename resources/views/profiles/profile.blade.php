@@ -54,7 +54,7 @@
                                         <label>Phone</label>
                                     </div>
                                     <div class="col-md-6">
-                                        <p>{{  $user->mobileNum}}</p>
+                                        <p>{{  $user->phoneNumber}}</p>
                                     </div>
                                 </div>
                                 @if($profile->job != null)
@@ -67,13 +67,21 @@
                                     </div>
                                 </div>
                                 @endif
-                                @if($user->type == 'driver')
+                                @if($user->car != null)
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Driver license</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>{{ $car->userLicense }}</p>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label>Car license</label>
                                     </div>
                                     <div class="col-md-6">
-                                        <p>{{ $car->License }}</p>
+                                        <p>{{ $car->license }}</p>
                                     </div>
                                 </div>
                                 <div class="row">

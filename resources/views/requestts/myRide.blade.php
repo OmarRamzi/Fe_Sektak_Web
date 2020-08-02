@@ -2,35 +2,44 @@
 
 @section('content')
   <div class="clearfix">
-    <a href="{{ route('requestts.create') }}"
+    <a href="{{ route('requests.create') }}"
     class="btn float-right btn-success"
     style="margin-bottom: 10px">
       Make Request
     </a>
   </div>
 
-  <div class="card card-default">
+  <div class="card card-default table-responsive-lg">
     <div class="card-header">My Ride</div>
         @if ($ride->count() > 0)
           <table class="card-body">
-            <table class="table">
-              <thead>
+            <table class="table card-body table-bordered  table-hover table-lg">
+              <thead class="thead-dark">
                 <tr>
-                  <th>Startpoint</th>
-                  <th>Destination</th>
-                  <th>Time</th>
-                  <th>AvailableSeets</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
+                    <th>startPoint Latitude</th>
+                    <th>startPoint Longitude</th>
+                    <th>destination Latitude</th>
+                    <th>destinationLongitude</th>
+                    <th>Time</th>
+                    <th>AvailableSeets</th>
+                    <th>Actions</th>
+                </thead>
               <tbody>
-                  <tr>
+                <tr>
                     <td>
-                      {{$ride->startPoint  }}
+                      {{$ride->startPointLatitude  }}
                     </td>
                     <td>
-                      {{ $ride->destination }}
+                        {{$ride->startPointLongitude }}
                     </td>
+                    <td>
+                      {{ $ride->destinationLatitude }}
+                    </td>
+                    <td>
+                        {{ $ride->destinationLongitude }}
+                    </td>
+
+
                     <td>
                         {{ $ride->time }}
                     </td>
@@ -41,7 +50,7 @@
                     <td>
 
                       <form class="float-right ml-2"
-                      action=" {{ route('requestts.cancelRide', ['request_id' => $requestt->id, 'ride_id' => $ride->id])}} " method="GET">
+                      action=" {{ route('requests.cancelRide', ['request_id' => $requestt->id, 'ride_id' => $ride->id])}} " method="GET">
                         @csrf
 
                           <button class="btn btn-danger btn-sm">

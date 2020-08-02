@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Profile;
 use App\User;
 use App\Car;
 use App\Request;
+use Illuminate\Http\Request as WebRequest;
+
 
 class ProfilesController extends Controller
 {
@@ -23,17 +24,15 @@ class ProfilesController extends Controller
         //dd($user);
 
     }
-    public function fillDetails(Request $request, $user_id)
+    public function fillDetails(WebRequest $request, $user_id)
     {
         $user = User::find($user_id);
         $car = $user->car()->create([
             'user_id'=>$user_id,
             'license' => $request->license,
+            'userLicense' => $request->userLicense,
             'carModel' => $request->model,
             'color' => $request->color,
-        ]);
-        $user->update([
-            'type'=>'driver',
         ]);
         return redirect(route('home'));
     }
@@ -44,7 +43,7 @@ class ProfilesController extends Controller
         $car = $user->car;
         return view('profiles.editProfile')->with('user',$user)->with('profile',$profile)->with('car',$car);
     }
-    public function update($user_id, Request $request)
+    public function update($user_id, WebRequest $request)
     {
         $user=User::find($user_id);
         $profile = $user->profile;
@@ -68,11 +67,13 @@ class ProfilesController extends Controller
             'job'=>$request->job,
 
         ]);
-        $car->update([
+        if ($car!=null) {
+            $car->update([
             'license' => $request->license,
             'carModel' => $request->model,
             'color' => $request->color,
         ]);
+        }
 
         session()->flash('flashMessage','Profile updated successfully');
         return redirect(route('users.showProfile',$user->id));

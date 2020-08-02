@@ -42,9 +42,9 @@
                             <label for="nationalID" class="col-md-4 col-form-label text-md-right">{{ __('nationalID') }}</label>
 
                             <div class="col-md-6">
-                                <input id="nationalID" type="text" class="form-control @error('nationalID') is-invalid @enderror" name="nationalID" value="{{ old('nationalID') }}" required autocomplete="nationalID" autofocus>
+                                <input id="nationalId" type="text" class="form-control @error('nationalId') is-invalid @enderror" name="nationalId" value="{{ old('nationalId') }}" required autocomplete="nationalId" autofocus>
 
-                                @error('nationalID')
+                                @error('nationalId')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -55,32 +55,16 @@
                             <label for="mobileNum" class="col-md-4 col-form-label text-md-right">{{ __('Mobile') }}</label>
 
                             <div class="col-md-6">
-                                <input id="mobileNum" type="text" class="form-control @error('mobileNum') is-invalid @enderror" name="mobileNum" value="{{ old('mobileNum') }}" required autocomplete="mobileNum" autofocus>
+                                <input id="phoneNumber" type="text" class="form-control @error('phoneNumber') is-invalid @enderror" name="phoneNumber" value="{{ old('phoneNumber') }}" required autocomplete="phoneNumber" autofocus>
 
-                                @error('mobileNum')
+                                @error('phoneNumber')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="type" class="col-md-4 col-form-label text-md-right">{{ __('Type') }}</label>
 
-                            <div class="col-md-6">
-                                <select class="custom-select form-control @error('type') is-invalid @enderror" id="inputGroupSelect01" name="type">
-                                            <option value="passenger" >Passenger</option>
-                                            <option value="driver">Driver</option>
-                                </select>
-
-                                @error('type')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-
-                        </div>
 
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>

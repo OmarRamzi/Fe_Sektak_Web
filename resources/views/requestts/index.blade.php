@@ -2,22 +2,23 @@
 
 @section('content')
   <div class="clearfix">
-    <a href="{{ route('requestts.create') }}"
+    <a href="{{ route('requests.create') }}"
     class="btn float-right btn-success"
     style="margin-bottom: 10px">
       Make Request
     </a>
   </div>
 
-  <div class="card card-default">
+  <div class="card card-default table-responsive-lg">
     <div class="card-header">My Requests</div>
         @if ($requestts->count() > 0)
-          <table class="card-body">
-            <table class="table">
-              <thead>
+          <table class=" table card-body table-bordered  table-hover table-lg">
+              <thead class="thead-dark">
                 <tr>
-                  <th>Meetpoint</th>
-                  <th>Destination</th>
+                  <th>meetPoint Latitude </th>
+                  <th>meetPoint Longitude </th>
+                  <th>destination Latitude</th>
+                  <th>destination Longitude</th>
                   <th>Time</th>
                   <th>NeededSeets</th>
                   <th>Actions</th>
@@ -27,10 +28,16 @@
                 @foreach ($requestts as $requestt)
                   <tr>
                     <td>
-                      {{$requestt->meetpoint  }}
+                      {{$requestt->meetPointLatitude  }}
                     </td>
                     <td>
-                      {{ $requestt->destination }}
+                        {{$requestt->meetPointLongitude  }}
+                    </td>
+                    <td>
+                      {{ $requestt->destinationLatitude}}
+                    </td>
+                    <td>
+                        {{ $requestt->destinationLongitude }}
                     </td>
                     <td>
                         {{ $requestt->time }}
@@ -40,20 +47,20 @@
                     </td>
 
                     <td>
+                      <a href="{{route('requests.edit', $requestt->id)}}" class="btn btn-primary float-right btn-sm">Edit</a>
+                      <a href="{{route('requests.viewAvailableRides', $requestt->id)}}" class="btn btn-primary float-right btn-md" style="margin-right:3%; "> Available rides</a>
                       <form class="float-right ml-2"
-                      action="{{route('requestts.destroy', $requestt->id)}}" method="POST">
+                      action="{{route('requests.destroy', $requestt->id)}}" method="POST">
                         @csrf
                         @method('DELETE')
                           <button class="btn btn-danger btn-sm">
                             Delete
                         </button>
                       </form>
-                        <a href="{{route('requestts.edit', $requestt->id)}}" class="btn btn-primary float-right btn-sm">Edit</a>
-                        <a href="{{route('requestts.viewAvailableRides', $requestt->id)}}" class="btn btn-primary float-right btn-sm" style="margin-right:3%; ">View available rides</a>
+
                     </td>
                   </tr>
                 @endforeach
-              </tbody>
           </table>
         @else
           <div class="card-body">

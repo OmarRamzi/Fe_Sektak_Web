@@ -123,8 +123,8 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light  shadow-sm"style="background-color:#7559D9" >
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}" style="font-weight:700; font-style: italic; font-size:1.25rem">
-                    {{ config('app.name', 'Laravel') }}
+                <a class="navbar-brand" href="{{ url('/home') }}" style="font-weight:700; font-style: italic; font-size:1.25rem">
+                    FeSektak
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -189,16 +189,11 @@
                 <div class="row">
                     <div class="col-md-4 py-4">
                         <ul class="list-group">
-                           {{-- @if (auth()->user()->isAdmin())
-                              <li class="list-group-item">
-                                <a href="">Users</a>
-                              </li>
-                            @endif--}}
                             <li class="list-group-item">
-                            <a href="{{ (auth()->user()->type=='driver')?route('rides.index'):route('car.showCarForm')}}"style="font-color:#7559D9; font-weight:500;">Act As Driver</a>
+                            <a href="{{ (auth()->user()->car!=null)?route('rides.index'):route('car.showCarForm')}}"style="font-color:#7559D9; font-weight:500;">Act As Driver</a>
                             </li>
                             <li class="list-group-item">
-                            <a href="{{ route('requestts.index') }}"style="font-color:#7559D9; font-weight:500;">Act As Passenger</a>
+                            <a href="{{ route('requests.index') }}"style="font-color:#7559D9; font-weight:500;">Act As Passenger</a>
                             </li>
                             <li class="list-group-item">
 

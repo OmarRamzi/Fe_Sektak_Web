@@ -41,8 +41,10 @@ class RidesController extends Controller
     public function store(WebRequest $request)
     {
         Ride::create([
-            'startPoint' => $request->startPoint,
-            'destination' => $request->destination,
+            'startPointLatitude' => floatval($request->startPointLatitude),
+            'startPointLongitude' =>floatval( $request->startPointLongitude),
+            'destinationLatitude' => floatval($request->destinationLatitude),
+            'destinationLongitude' => floatval($request->destinationLongitude),
             'availableSeats' => $request->availableSeats,
             'time' => $request->time,
             'user_id' => $request->user_id
@@ -85,8 +87,10 @@ class RidesController extends Controller
     {
         $ride = Ride::find($id);
         $ride->update([
-            'startPoint' => $request->startPoint,
-            'destination' => $request->destination,
+            'startPointLatitude' => floatval($request->startPointLatitude),
+            'startPointLongitude' =>floatval( $request->startPointLongitude),
+            'destinationLatitude' => floatval($request->destinationLatitude),
+            'destinationLongitude' => floatval($request->destinationLongitude),
             'availableSeats' => $request->availableSeats,
             'time' => $request->time,
             'user_id' => $request->user_id
@@ -108,15 +112,20 @@ class RidesController extends Controller
         session()->flash('flashMessage', 'Ride is deleted successfully', ['timeout' => 100]);
         return redirect(route('rides.index'));
     }
+
     public function viewSentRequests($id)
     {
         $ride = Ride::find($id);
-        $requests = Ride::find($id)->$requests->where('neeededSeats', '<=', $ride->availableSeats)->where('response', false);
-        return view('rides.viewSentRequests')->with('$requests', $requests)->with('ride', $ride);
+        $requests = Ride::find($id)->requests->where('neeededSeats', '<=', $ride->availableSeats)->where('response', false);
+        return view('rides.viewSentRequests')->with('requests', $requests)->with('ride', $ride);
     }
+
+
+
+
     public function acceptRequest($request_id, $ride_id)
     {
-        $requestt = WebRequest::find($request_id);
+        $requestt = Request::find($request_id);
         $ride = Ride::find($ride_id);
         if ($ride->availableSeats >= $requestt->neededSeats && $requestt->response == false) {
             $requestt->update([
@@ -127,14 +136,14 @@ class RidesController extends Controller
                 'availableSeats' => $ride->availableSeats - $requestt->neededSeats,
             ]);
             session()->flash('flashMessage', 'Request is accepted successfully', ['timeout' => 100]);
-            $requests = WebRequest::where('id', '<>', $request_id)->get();
-            return view('rides.viewSentRequests')->with('$requests', $requests)->with('ride', $ride);
+            $requests = Request::where('id', '<>', $request_id)->get();
+            return view('rides.viewSentRequests')->with('requests', $requests)->with('ride', $ride);
         } else {
-            $requests = WebRequest::where('id', '<>', $request_id)->where('response',false);
+            $requests = Request::where('id', '<>', $request_id)->where('response',false);
             if ($requests->count() > 0) {
                 session()->flash('flashMessage', 'You do not have enough seats for this request', ['timeout' => 100]);
             }
-            return view('rides.viewSentRequests')->with('$requests', $requests)->with('ride', $ride);
+            return view('rides.viewSentRequests')->with('requests', $requests)->with('ride', $ride);
         }
 
     }

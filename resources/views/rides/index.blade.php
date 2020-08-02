@@ -1,37 +1,43 @@
 @extends('layouts.app')
 
 @section('content')
-  <div class="clearfix">
-    <a href="{{ route('rides.create') }}"
-    class="btn float-right btn-success"
-    style="margin-bottom: 10px">
-      Make Ride
+<div class="clearfix">
+    <a href="{{ route('rides.create') }}" class="btn float-right btn-success" style="margin-bottom: 10px">
+        Make Ride
     </a>
-  </div>
+</div>
 
-  <div class="card card-default">
+<div class="card card-default">
     <div class="card-header">My Rides</div>
-        @if ($rides->count() > 0)
-          <table class="card-body">
-            <table class="table">
-              <thead>
+    @if ($rides->count() > 0)
+    <table class="card-body">
+        <table class="table card-body table-bordered  table-hover table-lg">
+            <thead class="thead-dark">
                 <tr>
-                  <th>Startpoint</th>
-                  <th>Destination</th>
-                  <th>Time</th>
-                  <th>AvailableSeets</th>
-                  <th>Actions</th>
+                    <th>startPoint Latitude</th>
+                    <th>startPoint Longitude</th>
+                    <th>destination Latitude</th>
+                    <th>destination Longitude</th>
+                    <th>Time</th>
+                    <th>AvailableSeets</th>
+                    <th>Actions</th>
                 </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
                 @foreach ($rides as $ride)
-                  <tr>
+                <tr>
                     <td>
-                      {{$ride->startPoint  }}
-                    </td>
-                    <td>
-                      {{ $ride->destination }}
-                    </td>
+                        {{$ride->startPointLatitude  }}
+                      </td>
+                      <td>
+                          {{$ride->startPointLongitude }}
+                      </td>
+                      <td>
+                        {{ $ride->destinationLatitude }}
+                      </td>
+                      <td>
+                          {{ $ride->destinationLongitude }}
+                      </td>
                     <td>
                         {{ $ride->time }}
                     </td>
@@ -40,29 +46,29 @@
                     </td>
 
                     <td>
-                      <form class="float-right ml-2"
-                      action="{{route('rides.destroy', $ride->id)}}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                          <button class="btn btn-danger btn-sm">
-                            Delete
-                        </button>
-                      </form>
+                        <form class="float-right ml-2" action="{{route('rides.destroy', $ride->id)}}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger btn-sm">
+                                Delete
+                            </button>
+                        </form>
                         <a href="{{route('rides.edit', $ride->id)}}" class="btn btn-primary float-right btn-sm">Edit</a>
-                        <a href="{{route('rides.viewSentRequests', $ride->id)}}" class="btn btn-primary float-right btn-sm" style="margin-right:3%; ">View Requests  </a>
+                        <a href="{{route('rides.viewSentRequests', $ride->id)}}"
+                            class="btn btn-primary float-right btn-sm" style="margin-right:3%; ">View Requests </a>
                     </td>
-                  </tr>
+                </tr>
                 @endforeach
-              </tbody>
-          </table>
+            </tbody>
+        </table>
         @else
-          <div class="card-body">
+        <div class="card-body">
             <h1 class="text-center">
-               No Rides Yet.
+                No Rides Yet.
             </h1>
-          </div>
+        </div>
         @endif
-    </div>
+</div>
 </div>
 
 

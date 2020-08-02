@@ -55,9 +55,9 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'mobileNum' => ['required', 'string', 'min:8', 'unique:users'],
-            'nationalID' => ['required', 'string', 'min:8', 'unique:users'],
-            
+            'phoneNumber' => ['required', 'string', 'min:8', 'unique:users'],
+            'nationalId' => ['required', 'string', 'min:8', 'unique:users'],
+
         ]);
     }
 
@@ -72,9 +72,8 @@ class RegisterController extends Controller
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'mobileNum' => $data['mobileNum'],
-            'nationalID' => $data['nationalID'],
-            'type' => $data['type'],
+            'phoneNumber' => $data['phoneNumber'],
+            'nationalId' => $data['nationalId'],
             'password' => Hash::make($data['password']),
         ]);
         $profile = Profile::create([
@@ -90,9 +89,6 @@ class RegisterController extends Controller
     }
     protected function redirectTo()
     {
-       if (auth()->user()->type == 'driver') {
-            return '/showCarForm' ;
-        }
         return'/home';
     }
 

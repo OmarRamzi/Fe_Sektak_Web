@@ -22,10 +22,10 @@
                   </div>
                 <div class="form-group">
                   <label for="about">Mobile:</label>
-                  <input id="mobileNum" type="text" class="form-control @error('mobileNum') is-invalid @enderror" name="mobileNum" value="{{ $user->mobileNum}}" >
+                  <input id="phoneNumber" type="text" class="form-control @error('phoneNumber') is-invalid @enderror" name="phoneNumber" value="{{ $user->phoneNumber}}" >
 
                 </div>
-                @if($car->License!=null)
+                @if($user->car!=null)
                 <div class="form-group">
                   <label for="license">Car License:</label>
                   <input type="text" name="license" class="form-control" value="{{$car->License}}">
@@ -46,7 +46,7 @@
                   <img src="{{$user->hasPicture() ? asset('storage/'.$user->getPicture()) : $user->getGravatar()}}" width="80px" height="80px">
                   <input type="file" name="picture" class="form-control mt-2">
                 </div>
-                
+
                 <div class="form-group">
                     <button class="btn btn-success">
                         Update Profile

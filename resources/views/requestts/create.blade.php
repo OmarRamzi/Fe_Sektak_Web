@@ -10,18 +10,26 @@
             {{ isset($requestt) ? "Update request" : "make request" }}
         </div>
         <div class="card-body">
-        <form action="{{ isset($requestt) ? route('requestts.update', $requestt->id) : route('requestts.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ isset($requestt) ? route('requests.update', $requestt->id) : route('requests.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @if (isset($requestt))
                   @method('PUT')
                 @endif
                 <div class="form-group">
-                    <label for="meetpoint">Meetpoint:</label>
-                <input type="text" class="form-control" name="meetpoint" placeholder="Enter the meetpoint" value="{{ isset($requestt) ? $requestt->meetpoint: ''}}">
+                    <label for="meetpoint">meetPointLatitude:</label>
+                    <input type="text" class="form-control" name="meetPointLatitude" placeholder="Enter the meetPointLatitude" value="{{ isset($requestt) ? $requestt->meetPointLatitude: ''}}">
                 </div>
                 <div class="form-group">
-                    <label for="Destination">Destination:</label>
-                    <input type="text" class="form-control" name="destination" placeholder="Enter your destination" value="{{ isset($requestt) ? $requestt->destination: ''}}">
+                    <label for="meetpoint">meetPointLongitude:</label>
+                    <input type="text" class="form-control" name="meetPointLongitude" placeholder="Enter the meetPointLongitude" value="{{ isset($requestt) ? $requestt->meetPointLongitude: ''}}">
+                </div>
+                <div class="form-group">
+                    <label for="Destination">destinationLatitude:</label>
+                    <input type="text" class="form-control" name="destinationLatitude" placeholder="Enter your destinationLatitude" value="{{ isset($requestt) ? $requestt->destinationLatitude: ''}}">
+                </div>
+                <div class="form-group">
+                    <label for="Destination">destinationLongitude:</label>
+                    <input type="text" class="form-control" name="destinationLongitude" placeholder="Enter your destinationLongitude" value="{{ isset($requestt) ? $requestt->destinationLongitude: ''}}">
                 </div>
                 <div class="form-group">
                     <label for="Time">Time:</label>

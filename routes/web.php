@@ -28,9 +28,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('/requests', 'RequestsController');
     Route::resource('/rides', 'RidesController');
-    Route::get('/requests/{id}/AvailableRides', 'RequestsController@viewAvailableRides')->name('requestts.viewAvailableRides');
+    Route::get('/requests/{id}/AvailableRides', 'RequestsController@viewAvailableRides')->name('requests.viewAvailableRides');
     Route::get('/requests/{request_id}/AvailableRides/{ride_id}', 'RequestsController@sendRequest')->name('requsetts.sendRequest');
-    Route::get('/requests/{request_id}/myRide/{ride_id}', 'RequestsController@cancelRide')->name('requestts.cancelRide');
+    Route::get('/requests/{request_id}/myRide/{ride_id}', 'RequestsController@cancelRide')->name('requests.cancelRide');
 
     //
     Route::get('/rides/{id}/AvailableRequests', 'RidesController@viewSentRequests')->name('rides.viewSentRequests');
