@@ -120,6 +120,23 @@ class UserController extends Controller
         }
 
     }
+    public function calcUserTotalReview()
+    {
+        $user = User::find(request('userId'));
+        $profile=$user->profile;
+
+        $profile->update([
+            'rate'=>$profile->rate  + request('rate'),
+            'services'=>$profile->services + 1,
+        ]);
+            $rate=$profile->rate;
+            $numOfServices=$profile->services;
+            $totalReview=round($rate/$numOfServices,2);
+            $this->content['totalReview'] =$totalReview ;
+            return response()->json($this->content);
+
+    }
+
 
 
 

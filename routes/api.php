@@ -14,6 +14,7 @@ Route::group(['namespace' => 'api'], function () {
 
 Route::group(['namespace' => 'api'], function () {
     Route::post('/register', 'UserController@register');
+    Route::get('/calcUserTotalReview', 'UserController@calcUserTotalReview');
     Route::get('/user', 'UserController@getById');
     Route::put('/user', 'UserController@edit');
     Route::delete('/user', 'UserController@destroy');
