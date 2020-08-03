@@ -31,5 +31,5 @@ Route::group(['namespace' => 'api'], function () {
     Route::delete('/ride', 'RidesController@destroy');
     Route::put('/ride', 'RidesController@update');
 
-
+    Route::post('/sendNotification', 'NotificationController@send');
 });
