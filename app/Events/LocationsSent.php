@@ -38,6 +38,6 @@ class LocationsSent extends Notification implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ride.'.$this->rideId);
+        return new Channel('ride.'.$this->rideId);
     }
 }

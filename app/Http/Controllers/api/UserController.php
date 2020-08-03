@@ -34,6 +34,7 @@ class UserController extends Controller
     {
         $user=User::find(request('userId'));
         $user['profile']=$user->profile;
+	$user['car']=$user->car;
         return $user;
     }
     public function register()
