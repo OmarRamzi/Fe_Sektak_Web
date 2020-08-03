@@ -125,14 +125,16 @@ class UserController extends Controller
         $user = User::find(request('userId'));
         $profile=$user->profile;
 
+        $rate=$profile->rate+ request('rate');
+        $numOfServices=$profile->services + 1;
+        $totalReview=round($rate/$numOfServices,2);
         $profile->update([
-            'rate'=>$profile->rate  + request('rate'),
-            'services'=>$profile->services + 1,
+            'rate'=>$rate,
+            'services'=>$numOfServices,
+            'totalReview'=>$totalReview,
         ]);
-            $rate=$profile->rate;
-            $numOfServices=$profile->services;
-            $totalReview=round($rate/$numOfServices,2);
-            $this->content['totalReview'] =$totalReview ;
+
+            $this->content['status']='done' ;
             return response()->json($this->content);
 
     }

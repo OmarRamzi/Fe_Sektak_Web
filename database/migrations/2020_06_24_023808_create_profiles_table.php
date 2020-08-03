@@ -20,7 +20,7 @@ class CreateProfilesTable extends Migration
             $table->string('picture')->nullable();
             $table->float('rate')->default(0);
             $table->integer('services')->default(0);
-            ;
+            $table->float('totalReview')->default(0);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
