@@ -14,10 +14,9 @@ class NotificationController extends Controller{
     }
     public function showNotifications(){
         $user= User::find(request('userId'));
-        $user->unreadNotifications->markAsRead();
         $this->content['notifications'] = $user->notifications;
-        //dd($this->content['notifications']);
-        return response()->json($this->content);
+        $user->unreadNotifications->markAsRead();
+	return response()->json($this->content);
     }
     public function getUnReadNotificationsCount(){
         $user= User::find(request('userId'));
