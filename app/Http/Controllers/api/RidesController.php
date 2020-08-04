@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
-
+use App\Notifications\RequestAccepted;
 use App\Ride;
 use App\User;
 use App\Request;
@@ -78,7 +78,7 @@ public static function x(
             ->where('time', '>=', $request->time)
             ->where('availableSeats', '>=', $request->neededSeats)
             ->where('available', true);
-            $filtered = $rides->filter(function ($value, $key) use ($request) {          
+            $filtered = $rides->filter(function ($value, $key) use ($request) {
 return (self::x(
                     $request->destinationLatitude,
                     $request->destinationLongitude,
@@ -203,6 +203,7 @@ return (self::x(
             $ride->update([
                 'availableSeats' => $ride->availableSeats - $requestt->neededSeats,
             ]);
+            $requestt->user->notify(new RequestAccepted($ride));   //driver
             $this->content['status'] = 'done';
             return response()->json($this->content);
 

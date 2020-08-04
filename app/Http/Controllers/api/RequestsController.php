@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\RequestSent;
 
 use App\Request;
 use App\Ride;
@@ -132,10 +133,10 @@ class RequestsController extends Controller
             return response()->json($this->content);
         }
     }
-   
 
 
-   
+
+
 
 
 
@@ -164,6 +165,7 @@ class RequestsController extends Controller
         $requestt = Request::find($request_id);
         $requestt->ride_id = $ride_id;
         $requestt->save();
+        $requestt->ride->user->notify(new RequestSent($requestt));   //driver
         session()->flash('flashMessage', 'Request is sent', ['timeout' => 100]);
         $requestts=Request::all()->where('id', '<>', $requestt->id);
         return view('requestts.index')->With('requestts', $requestts);

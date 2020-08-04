@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Notifications\RequestAccepted;
 use App\Ride;
 use App\Request;
 use Illuminate\Http\Request as WebRequest;
@@ -135,6 +135,7 @@ class RidesController extends Controller
             $ride->update([
                 'availableSeats' => $ride->availableSeats - $requestt->neededSeats,
             ]);
+            $requestt->user->notify(new RequestAccepted($ride));   //driver
             session()->flash('flashMessage', 'Request is accepted successfully', ['timeout' => 100]);
             $requests = Request::where('id', '<>', $request_id)->get();
             return view('rides.viewSentRequests')->with('requests', $requests)->with('ride', $ride);

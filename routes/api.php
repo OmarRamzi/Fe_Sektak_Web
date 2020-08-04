@@ -14,6 +14,8 @@ Route::group(['namespace' => 'api'], function () {
 
 Route::group(['namespace' => 'api'], function () {
     Route::post('/register', 'UserController@register');
+    Route::get('/showNotifications', 'NotificationController@showNotifications');
+    Route::get('/getUnReadNotificationsCount', 'NotificationController@getUnReadNotificationsCount');
     Route::post('/calcUserTotalReview', 'UserController@calcUserTotalReview');
     Route::get('/user', 'UserController@getById');
     Route::put('/user', 'UserController@edit');
