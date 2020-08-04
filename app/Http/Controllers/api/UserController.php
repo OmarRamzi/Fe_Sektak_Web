@@ -209,7 +209,7 @@ class UserController extends Controller
             $user->update([
                 'name'=>request('name'),
                 'mobileNum'=>request('phoneNumber'),
-                'password'=>request('password'),
+                'password'=>Hash::make(request('password')),
             ]);
             $profile=$user->profile;
             $profile->update([
