@@ -157,18 +157,24 @@ class RequestsController extends Controller
 
 
 
-
-
-
-    public function sendRequest($request_id, $ride_id)
+ public function reject()
     {
-        $requestt = Request::find($request_id);
-        $requestt->ride_id = $ride_id;
+        $requestt = Request::find(request('requestId'));
+        $requestt->ride_id = null;
+        $requestt->save();
+	$this->content['status'] = 'done';
+        return response()->json($this->content);
+    }
+
+
+    public function sendRequest()
+    {
+        $requestt = Request::findOrFail(request('requestId'));
+        $requestt->ride_id = request('rideId');
         $requestt->save();
         $requestt->ride->user->notify(new RequestSent($requestt));   //driver
-        session()->flash('flashMessage', 'Request is sent', ['timeout' => 100]);
-        $requestts=Request::all()->where('id', '<>', $requestt->id);
-        return view('requestts.index')->With('requestts', $requestts);
+        $this->content['status'] = 'done';
+        return response()->json($this->content);
     }
     public function cancelRide($request_id, $ride_id)
     {

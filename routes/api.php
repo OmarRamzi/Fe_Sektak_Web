@@ -24,8 +24,10 @@ Route::group(['namespace' => 'api'], function () {
 
     Route::get('/allRequests', 'RequestsController@index');
     Route::post('/request', 'RequestsController@store');
+    Route::put('/sendRequest', 'RequestsController@sendRequest');
     Route::put('/request', 'RequestsController@update');
     Route::delete('/request', 'RequestsController@destroy');
+    Route::put('/rejectRequest', 'RequestsController@reject');
 
     Route::get('/allRides', 'RidesController@index');
     Route::get('/availableRides', 'RidesController@viewAvailableRides');
