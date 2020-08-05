@@ -20,6 +20,7 @@ Route::group(['namespace' => 'api'], function () {
     Route::get('/user', 'UserController@getById');
     Route::put('/user', 'UserController@edit');
     Route::delete('/user', 'UserController@destroy');
+    Route::post('updateProfilePicture', 'UserController@updateProfilePicture');
 
 
     Route::get('/allRequests', 'RequestsController@index');

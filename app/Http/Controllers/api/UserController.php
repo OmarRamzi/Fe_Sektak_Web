@@ -16,13 +16,28 @@ class UserController extends Controller
     {
         $this->content = array();
     }
+    public function updateProfilePicture()
+    {
+	$user = User::findOrFail(request('userId'));
+	$rules= ['picture' => ['required','image'],];
+	$validator = Validator::make(request()->all(),$rules);
+	if($validator->passes()){
+		$imagePath = request('picture')->store('uploads','public');
+		$user->profile->update([
+                            'picture' => $imagePath,
+                        ]);
+	}
+	$this->content['status'] = 'done';
+        return response()->json($this->content);
+    }
     public function login()
     {
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
-
             $this->content['user'] = $user;
-            $this->content['user']['profile'] = $user->profile;
+	    $profile = $user->profile;
+ 	    $profile->picture = url()->previous().'\/\/\/\/storage\/\/\/\/'.$profile->picture;   
+            $this->content['user']['profile'] = $profile;
             $this->content['user']['car'] = $user->car;
             return response()->json($this->content);
         } else {
@@ -33,7 +48,9 @@ class UserController extends Controller
     public function getById()
     {
         $user=User::find(request('userId'));
-        $user['profile']=$user->profile;
+	$profile = $user->profile;
+ 	$profile->picture = url()->previous().'\/\/\/\/storage\/\/\/\/'.$profile->picture;   
+        $user['profile']=$profile;
 	    $user['car']=$user->car;
         return $user;
     }
@@ -88,7 +105,6 @@ class UserController extends Controller
             $user->save();
             $profile = Profile::create([
                 'user_id' => $user->id,
-                'picture' => $user->getGravatar(),
             ]);
             $this->content['status'] = 'done';
         } else {
@@ -215,12 +231,6 @@ class UserController extends Controller
             $profile->update([
                 'job' => request('job'),
             ]);
-            if (request()->hasFile('picture')) {
-                $picture = request('picture')->store('profilesPictures', 'public');
-                $profile->update([
-                'picture'=>$picture,
-                ]);
-            }
             $this->content['status'] = 'done';
             return response()->json($this->content);
         } else {
