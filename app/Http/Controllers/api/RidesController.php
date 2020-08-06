@@ -67,6 +67,8 @@ public static function calcDistance(
     }
 
 
+
+
     public function viewAvailableRides(Request $request)
     {
         $request = Request::findOrFail(request('id'));
@@ -84,7 +86,16 @@ return (self::calcDistance(
                     $ride->destinationLongitude
                 )<=5);
             });
+            
+            $price=self::calcDistance(
+                $request->meetPointLatitude,
+                $request->meetPointLongitude,
+                $request->destinationLatitude,
+                $request->destinationLongitude
+            )*.5;
             $this->content['rides'] = $filtered->values();
+            $this->content['price'] = $price;
+
             return response()->json($this->content);
         } else {
             $this->content['rides'] = $request->ride;
@@ -182,6 +193,7 @@ return (self::calcDistance(
             $request->save();
 
         }
+        $ride->delete();
         $this->content['status'] = 'done';
         return response()->json($this->content);
     }
