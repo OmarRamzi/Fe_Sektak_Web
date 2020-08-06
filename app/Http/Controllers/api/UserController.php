@@ -58,17 +58,17 @@ class UserController extends Controller
     {
         $data = request()->all();
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'name' => ['required', 'string', 'max:255' ,'regex:/^[a-zA-Z]/'],
+            'email' => ['required', 'string', 'unique:users','email', 'max:255', 'unique:users','regex:/^[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|hotmail.com|yahoo.com)$/'],
             'password' => ['required', 'string', 'min:8'],
-            'phoneNumber' => ['required', 'string', 'min:8', 'unique:users'],
-            'nationalId' => ['required', 'string', 'min:8', 'unique:users']
+            'phoneNumber' => ['required', 'string', 'min:8', 'unique:users','regex:/^(0110|0111|0112)[0-9]{7}$/'],
+            'nationalId' => ['required', 'string', 'min:8', 'unique:users','regex:/^(2)[0-9]{13}$/']
         ];
         $carRules = [
-            'license' => ['required','min:8','unique:cars'],
-            'model' => 'required|string',
-            'color' => 'required|string',
-            'userLicense' => 'required|min:8|unique:cars',
+            'license' => ['required','min:8','unique:cars','regex:/^[a-zA-Z0-9]{8}$/'],
+            'model' => ['required','string',],
+            'color' => ['required','string',],
+            'userLicense' => ['required','min:8','unique:cars','regex:/^[0-9]{8}$/'],
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->passes()) {
@@ -166,22 +166,16 @@ class UserController extends Controller
     {
         $data = request()->all();
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'phoneNumber' => ['required', 'string', 'min:8'],
+            'name' => ['required', 'string', 'max:255' ,'regex:/^[a-zA-Z]/'],
+            'phoneNumber' => ['required', 'string', 'min:8', 'unique:users','regex:/^(0110|0111|0112)[0-9]{7}$/'],
             'password' => ['required', 'string', 'min:8'],
-            'job'=>['string']
 
         ];
         $carRules = [
-            'car'=>[
-                'license' => 'min:8',
-                'model' => 'string',
-                'color' => 'string',
-                'userLicense' => 'min:8',
-            ]
-
-
-
+                'license' => ['required','min:8','unique:cars','regex:/^[a-zA-Z0-9]{8}$/'],
+                'model' => ['required','string',],
+                'color' => ['required','string',],
+                'userLicense' => ['required','min:8','unique:cars','regex:/^[0-9]{8}$/'],
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->passes()) {
@@ -198,7 +192,6 @@ class UserController extends Controller
                             'carModel' => request('car')['model'],
                             'color' => request('car')['color'],
                             'userLicense' => request('car')['userLicense'],
-                            //'user_id' => $user->id,
                         ]);
 
                     }else{
@@ -226,10 +219,6 @@ class UserController extends Controller
                 'name'=>request('name'),
                 'mobileNum'=>request('phoneNumber'),
                 'password'=>Hash::make(request('password')),
-            ]);
-            $profile=$user->profile;
-            $profile->update([
-                'job' => request('job'),
             ]);
             $this->content['status'] = 'done';
             return response()->json($this->content);

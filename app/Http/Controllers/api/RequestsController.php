@@ -1,10 +1,9 @@
 <?php
-
 namespace App\Http\Controllers\api;
-
 use App\Http\Controllers\Controller;
 use App\Notifications\RequestSent;
-
+use App\Notifications\RequestCanceled;
+use App\Notifications\RequestAccepted;
 use App\Request;
 use App\Ride;
 use Illuminate\Http\Request as WebRequest;
@@ -38,18 +37,16 @@ class RequestsController extends Controller
      */
     public function store()
     {
-        $data = request()->all();
         $rules = [
             'meetPointLatitude' => ['required'],
             'meetPointLongitude' => ['required'],
             'endPointLatitude' => ['required'],
             'endPointLongitude' => ['required'],
-            'numberOfNeededSeats' => ['required'],
+            'numberOfNeededSeats' => ['required','reex:/^[1234]$/'],
             'time' => ['required'],
-            'response' => ['boolean'],
             'userId' => ['required']
         ];
-        $validator = Validator::make($data, $rules);
+        $validator = Validator::make( request()->all(), $rules);
         if ($validator->passes()) {
             Request::create([
             'meetPointLatitude' => request('meetPointLatitude'),
@@ -58,8 +55,7 @@ class RequestsController extends Controller
             'destinationLongitude' => request('endPointLongitude'),
             'neededSeats' => request('numberOfNeededSeats'),
             'time' => request('time'),
-            'user_id' => request('userId')
-
+            'user_id' => request('userId'),
         ]);
             $this->content['status'] = 'done';
             return response()->json($this->content);
@@ -70,28 +66,24 @@ class RequestsController extends Controller
         }
     }
 
-
-
-
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Request  $requestt
+     * @param  \App\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function update()
     {
-        $data = request()->all();
         $rules = [
             'meetPointLatitude' => ['required'],
             'meetPointLongitude' => ['required'],
             'endPointLatitude' => ['required'],
             'endPointLongitude' => ['required'],
-            'numberOfNeededSeats' => ['required'],
+            'numberOfNeededSeats' => ['required','reex:/^[1234]$/'],
             'time' => ['required'],
         ];
-        $validator = Validator::make($data, $rules);
+        $validator = Validator::make( request()->all(), $rules);
         if ($validator->passes()) {
             $request=Request::find(request('requestId'));
             $request->update([
@@ -114,14 +106,14 @@ class RequestsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Request  $requestt
+     * @param  \App\Request $request
      * @return \Illuminate\Http\Response
      */
     public function destroy()
     {
-        $requestt = Request::find(request('requestId'));
-        if ($requestt!=null) {
-            $requestt->delete();
+        $request = Request::find(request('requestId'));
+        if ($request!=null) {
+            $request->delete();
             $this->content['status'] = 'done';
             return response()->json($this->content);
         } else {
@@ -130,90 +122,63 @@ class RequestsController extends Controller
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  public function reject()
     {
-        $requestt = Request::find(request('requestId'));
-        $requestt->ride_id = null;
-        $requestt->save();
+        $request = Request::find(request('requestId'));
+        $request->ride_id = null;
+        $request->save();
 	    $this->content['status'] = 'done';
         return response()->json($this->content);
     }
 
-
     public function sendRequest()
     {
-        $requestt = Request::findOrFail(request('requestId'));
-        $requestt->ride_id = request('rideId');
-        $requestt->save();
-        $requestt->ride->user->notify(new RequestSent($requestt));   //driver
+        $request= Request::findOrFail(request('requestId'));
+        $request->ride_id = request('rideId');
+        $request->save();
+        $request->ride->user->notify(new RequestSent($request));   //driver
         $this->content['status'] = 'done';
         return response()->json($this->content);
     }
 
-    public function cancelRide($request_id, $ride_id)
-    {
-        $requestt = Request::find($request_id);
-        $requestt->ride->availableSeats=$requestt->ride->availableSeats+ $requestt->neededSeats;
-        $requestt->response=false;
-        $requestt->ride_id = null;
-        $requestt->save();
-        session()->flash('flashMessage', 'Request to Ride is canceled ', ['timeout' => 100]);
-        return redirect(route('requestts.index'));
-    }
-
-
-
-
-
-
-
-
 
     public function acceptRequest()
     {
-        $requestt = Request::find(request('requestId'));
+        $request = Request::find(request('requestId'));
         $ride = Ride::find(request('rideId'));
-        if ($ride->availableSeats >= $requestt->neededSeats && $requestt->response == false) {
-            $requestt->update([
+        if ($ride->availableSeats >= $request->neededSeats && $request->response == false) {
+            $request->update([
                 'response' => true,
                 'ride_id' => $ride->id,
             ]);
             $ride->update([
-                'availableSeats' => $ride->availableSeats - $requestt->neededSeats,
+                'availableSeats' => $ride->availableSeats - $request->neededSeats,
             ]);
-            $requestt->user->notify(new RequestAccepted($ride));   //driver
+            $request->user->notify(new RequestAccepted($ride));   //driver
             $this->content['status'] = 'done';
             return response()->json($this->content);
-
         } else {
             $this->content['status'] = 'unAvailable';
             return response()->json($this->content);
-
         }
-
     }
+
+    public function cancelRequest()
+    {
+        $user=User::find(request('userId'));
+        $request = Request::find(request('requestId'));
+        if($user->id !=  $request->user->id){//driver canel request
+            $request->user->notify(new RequestCanceled($request,$user)); //notify passenger
+        }else{//passenger cancel request
+            $request->ride->user->notify(new RequestCanceled($request,$user)); //notify driver
+        }
+        $request->ride->availableSeats=$request->ride->availableSeats+ $request->neededSeats;
+        $request->response=false;
+        $request->ride_id = NULL;
+        $request->save();
+        $this->content['status'] = 'done';
+        return response()->json($this->content);
+    }
+
 
 }

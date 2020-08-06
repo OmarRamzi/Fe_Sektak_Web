@@ -95,7 +95,6 @@ class RequestsController extends Controller
             'time' => $request->time,
             'user_id' => $request->user_id
         ]);
-
         session()->flash('flashMessage', 'request is updated successfully',['timeout' => 100]);
         return redirect(route('requests.index'));
     }
@@ -110,7 +109,6 @@ class RequestsController extends Controller
     {
         $requestt = Request::find($id);
         $requestt->delete();
-
         session()->flash('flashMessage', 'Request deleted successfully',['timeout' => 100]);
         return redirect(route('requests.index'));
     }

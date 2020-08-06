@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
-use App\Notifications\RequestAccepted;
 use App\Ride;
 use App\User;
 use App\Request;
@@ -41,11 +40,9 @@ class RidesController extends Controller
             $this->content['status'] = 'already deleted';
             return response()->json($this->content);
          }
-
-
      }
 
-public static function x(
+public static function calcDistance(
         $latitudeFrom,
         $longitudeFrom,
         $latitudeTo,
@@ -78,15 +75,14 @@ public static function x(
             ->where('time', '>=', $request->time)
             ->where('availableSeats', '>=', $request->neededSeats)
             ->where('available', true);
-            $filtered = $rides->filter(function ($value, $key) use ($request) {
-return (self::x(
+            $filtered = $rides->filter(function ($ride, $key) use ($request) {
+return (self::calcDistance(
                     $request->destinationLatitude,
                     $request->destinationLongitude,
-                    $value->destinationLatitude,
-                    $value->destinationLongitude
-                )<5);
+                    $ride->destinationLatitude,
+                    $ride->destinationLongitude
+                )<=5);
             });
-
             $this->content['rides'] = $filtered->values();
             return response()->json($this->content);
         } else {
@@ -117,7 +113,6 @@ return (self::x(
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->passes()) {
-            //dd(request('startPointLatitude'));
             Ride::create([
                 'startPointLatitude' =>request('startPointLatitude'),
                 'startPointLongitude' =>request('startPointLongitude'),
@@ -125,7 +120,6 @@ return (self::x(
                 'destinationLongitude' =>request('endPointLongitude'),
                 'availableSeats' =>request('availableSeats'),
                 'time' => request('time'),
-                'available' => true,
                 'user_id' => request('userId')
             ]);
             $this->content['status'] = 'done';
@@ -155,7 +149,6 @@ return (self::x(
             'endPointLongitude' => ['required'],
             'availableSeats' => ['required'],
             'time' => ['required'],
-            'userId' => ['required']
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->passes()) {
@@ -168,7 +161,6 @@ return (self::x(
                 'availableSeats' =>request('availableSeats'),
                 'time' => request('time'),
                 'available' => request('available'),
-                'user_id' => request('userId')
             ]);
             $this->content['status'] = 'done';
             return response()->json($this->content);
@@ -177,12 +169,5 @@ return (self::x(
             $this->content['details'] = $validator->errors()->all();
             return response()->json($this->content);
     }
-
-
-
-
-
     }
-
-   
 }
