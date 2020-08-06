@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
+use App\Notifications\RideCanceled;
 use App\Ride;
 use App\User;
 use App\Request;
@@ -106,7 +107,7 @@ return (self::calcDistance(
             'startPointLongitude' => ['required'],
             'endPointLatitude' => ['required'],
             'endPointLongitude' => ['required'],
-            'availableSeats' => ['required'],
+            'availableSeats' => ['required','regex:/^[01234]$/'],
             'time' => ['required'],
             'userId' => ['required']
 
@@ -147,7 +148,7 @@ return (self::calcDistance(
             'startPointLongitude' => ['required'],
             'endPointLatitude' => ['required'],
             'endPointLongitude' => ['required'],
-            'availableSeats' => ['required'],
+            'availableSeats' => ['required','regex:/^[01234]$/'],
             'time' => ['required'],
         ];
         $validator = Validator::make($data, $rules);
@@ -170,4 +171,26 @@ return (self::calcDistance(
             return response()->json($this->content);
     }
     }
+
+    public function cancelRide()
+    {
+        $ride = Ride::find(request('rideId'));
+        foreach($ride->requests as $request){
+            $request->user->notify(new RideCanceled($request)); //notify passenger
+            $request->response=false;
+            $request->ride_id = NULL;
+            $request->save();
+
+        }
+        $this->content['status'] = 'done';
+        return response()->json($this->content);
+    }
+
+
+
+
+
+
+
+
 }

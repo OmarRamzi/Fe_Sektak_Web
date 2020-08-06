@@ -172,7 +172,8 @@ class RequestsController extends Controller
         }else{//passenger cancel request
             $request->ride->user->notify(new RequestCanceled($request,$user)); //notify driver
         }
-        $request->ride->availableSeats=$request->ride->availableSeats+ $request->neededSeats;
+        $request->ride->availableSeats=$request->ride->availableSeats + $request->neededSeats;
+        $request->ride->save();
         $request->response=false;
         $request->ride_id = NULL;
         $request->save();
