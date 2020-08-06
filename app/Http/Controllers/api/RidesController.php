@@ -167,7 +167,7 @@ return (self::x(
                 'destinationLongitude' =>request('endPointLongitude'),
                 'availableSeats' =>request('availableSeats'),
                 'time' => request('time'),
-                'available' => true,
+                'available' => request('available'),
                 'user_id' => request('userId')
             ]);
             $this->content['status'] = 'done';
