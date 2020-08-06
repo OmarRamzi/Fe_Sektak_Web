@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\api;
-
+use App\Events\LocationsSent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\User;
@@ -36,7 +36,7 @@ class UserController extends Controller
             $user = Auth::user();
             $this->content['user'] = $user;
 	    $profile = $user->profile;
- 	    $profile->picture = url()->previous().'\/\/\/\/storage\/\/\/\/'.$profile->picture;   
+ 	    $profile->picture = url()->previous().'\/\/\/\/storage\/\/\/\/'.$profile->picture;
             $this->content['user']['profile'] = $profile;
             $this->content['user']['car'] = $user->car;
             return response()->json($this->content);
@@ -49,7 +49,7 @@ class UserController extends Controller
     {
         $user=User::find(request('userId'));
 	$profile = $user->profile;
- 	$profile->picture = url()->previous().'\/\/\/\/storage\/\/\/\/'.$profile->picture;   
+ 	$profile->picture = url()->previous().'\/\/\/\/storage\/\/\/\/'.$profile->picture;
         $user['profile']=$profile;
 	    $user['car']=$user->car;
         return $user;
@@ -240,6 +240,19 @@ class UserController extends Controller
         }
     }
 
-    
+
+
+    public function send(){
+        event(new LocationsSent(
+            request('rideId'),
+            request('userId'),
+            request('locationLatitude'),
+            request('locationLongitude')));
+     }
+
+
+
+
+
 
 }

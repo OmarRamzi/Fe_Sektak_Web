@@ -14,9 +14,9 @@ Route::group(['namespace' => 'api'], function () {
 
 Route::group(['namespace' => 'api'], function () {
     Route::post('/register', 'UserController@register');
-    Route::get('/showNotifications', 'NotificationController@showNotifications');
+    Route::get('/notifications', 'NotificationController@showNotifications');
     Route::get('/getUnReadNotificationsCount', 'NotificationController@getUnReadNotificationsCount');
-    Route::post('/calcUserTotalReview', 'UserController@calcUserTotalReview');
+    Route::post('/review', 'UserController@calcUserTotalReview');
     Route::get('/user', 'UserController@getById');
     Route::put('/user', 'UserController@edit');
     Route::delete('/user', 'UserController@destroy');
@@ -32,10 +32,10 @@ Route::group(['namespace' => 'api'], function () {
 
     Route::get('/allRides', 'RidesController@index');
     Route::get('/availableRides', 'RidesController@viewAvailableRides');
-    Route::put('/acceptRequest', 'RidesController@acceptRequest');
+    Route::put('/acceptRequest', 'RequestsController@acceptRequest');
     Route::post('/ride', 'RidesController@store');
     Route::delete('/ride', 'RidesController@destroy');
     Route::put('/ride', 'RidesController@update');
 
-    Route::post('/sendNotification', 'NotificationController@send');
+    Route::post('/userLocation', 'UserController@send');
 });

@@ -184,34 +184,5 @@ return (self::x(
 
     }
 
-    public function viewSentRequests($id)
-    {
-        $ride = Ride::find($id);
-        $requestts = Ride::find($id)->requestts->where('neeededSeats', '<=', $ride->availableSeats)->where('response', false);
-        return view('rides.viewSentRequests')->with('requestts', $requestts)->with('ride', $ride);
-    }
-
-    public function acceptRequest()
-    {
-        $requestt = Request::find(request('requestId'));
-        $ride = Ride::find(request('rideId'));
-        if ($ride->availableSeats >= $requestt->neededSeats && $requestt->response == false) {
-            $requestt->update([
-                'response' => true,
-                'ride_id' => $ride->id,
-            ]);
-            $ride->update([
-                'availableSeats' => $ride->availableSeats - $requestt->neededSeats,
-            ]);
-            $requestt->user->notify(new RequestAccepted($ride));   //driver
-            $this->content['status'] = 'done';
-            return response()->json($this->content);
-
-        } else {
-            $this->content['status'] = 'unAvailable';
-            return response()->json($this->content);
-
-        }
-
-    }
+   
 }
