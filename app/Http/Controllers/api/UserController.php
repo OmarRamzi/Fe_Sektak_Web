@@ -9,6 +9,7 @@ use App\Car;
 use App\Profile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -165,21 +166,27 @@ class UserController extends Controller
     public function edit()
     {
         $data = request()->all();
+        $user = User::findOrFail(request('user_id'));
         $rules = [
             'name' => ['required', 'string', 'max:255' ,'regex:/^[a-zA-Z]/'],
-            'phoneNumber' => ['required', 'string', 'min:8', 'unique:users','regex:/^(0110|0111|0112)[0-9]{7}$/'],
+            'phoneNumber' => ['required', 'string', 'min:8','regex:/^(0110|0111|0112)[0-9]{7}$/'],
             'password' => ['required', 'string', 'min:8'],
+            Rule::unique('phoneNumber')->ignore($user->mobileNum),
+
 
         ];
         $carRules = [
-                'license' => ['required','min:8','unique:cars','regex:/^[a-zA-Z0-9]{8}$/'],
+                'license' => ['required','min:8','regex:/^[a-zA-Z0-9]{8}$/'],
+                Rule::unique('license')->ignore($user->license),
+
                 'model' => ['required','string',],
                 'color' => ['required','string',],
-                'userLicense' => ['required','min:8','unique:cars','regex:/^[0-9]{8}$/'],
+                'userLicense' => ['required','min:8','regex:/^[0-9]{8}$/'],
+                Rule::unique('userLicense')->ignore($user->userLicense),
+
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->passes()) {
-            $user = User::findOrFail(request('user_id'));
 
             if (request('car') != null) {
                 $validator = Validator::make(request('car'), $carRules);
