@@ -80,7 +80,7 @@ class RequestsController extends Controller
             'meetPointLongitude' => ['required'],
             'endPointLatitude' => ['required'],
             'endPointLongitude' => ['required'],
-            'numberOfNeededSeats' => ['required','reex:/^[1234]$/'],
+            'numberOfNeededSeats' => ['required','regex:/^[1234]$/'],
             'time' => ['required'],
         ];
         $validator = Validator::make( request()->all(), $rules);
